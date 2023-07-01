@@ -82,9 +82,8 @@ class GumbelAdjacency(torch.nn.Module):
     def __init__(self, num_vars):
         super(GumbelAdjacency, self).__init__()
         self.num_vars = num_vars
-        self.log_alpha = torch.nn.Parameter(torch.zeros((num_vars, num_vars)))
+        self.log_alpha = torch.nn.Parameter(5.0*torch.ones((num_vars, num_vars)))
         self.uniform = torch.distributions.uniform.Uniform(0, 1)
-        self.reset_parameters()
 
     def forward(self, bs, tau=1, drawhard=True):
         adj = gumbel_sigmoid(self.log_alpha, self.uniform, bs, tau=tau, hard=drawhard)
@@ -93,9 +92,6 @@ class GumbelAdjacency(torch.nn.Module):
     def get_proba(self):
         """Returns probability of getting one"""
         return torch.sigmoid(self.log_alpha)
-
-    def reset_parameters(self):
-        torch.nn.init.constant_(self.log_alpha, 5)
 
 
 class GumbelIntervWeight(torch.nn.Module):

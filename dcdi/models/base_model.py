@@ -133,6 +133,9 @@ class BaseModel(nn.Module):
                 # sample the matrix M that will be applied as a mask at the MLP input
                 M = self.gumbel_adjacency(bs)
                 adj = self.adjacency.unsqueeze(0)
+                
+                #print(M)
+                #print(adj)
 
                 if not self.intervention:
                     x = torch.einsum("tij,bjt,ljt,bj->bti", weights[layer], M, adj, x) + biases[layer]
@@ -183,7 +186,7 @@ class BaseModel(nn.Module):
                 x = F.leaky_relu(x) if self.nonlin == "leaky-relu" else torch.sigmoid(x)
 
         self.zero_weights_ratio = num_zero_weights / float(self.numel_weights)
-
+        
         return torch.unbind(x, 1)
 
     def get_w_adj(self):
